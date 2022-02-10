@@ -5,13 +5,14 @@ environment() {
 	export target=$1
 	export implementation="$(echo $2 | cut -d '_' -f 1)"
 	export targets="$(echo $2 | cut -d '_' -f 2 | tr -s ',' ' ')"
-	export frequency="$(echo $2 | cut -d '_' -f 3)"
-	export programming_part="$(echo $2 | cut -d '_' -f 4)"
+	export programming_part="$(echo $2 | cut -d '_' -f 3)"
 	export technology="$(echo $programming_part | cut -d ',' -f 1)"
 	export chip="$(echo $programming_part | cut -d ',' -f 2)"
 	export part="$(echo $chip | cut -d '-' -f 1)"
 	export size="$(echo $chip | cut -d '-' -f 2)"
-	export board="$(echo $2 | cut -d '_' -f 5)"
+	export board="$(echo $2 | cut -d '_' -f 4)"
+	export programmer="$(echo $2 | cut -d '_' -f 5)"
+	export frequency="$(echo $2 | cut -d '_' -f 6)"
 	export TOOLSDIR=${PWD}/tools/
 	export FOUNDRY=${TOOLSDIR}/ispfpga
 	export TCL_LIBRARY=${TOOLSDIR}/tcltk/lib/tcl8.5
@@ -56,7 +57,7 @@ program() {
 	done
         sed -i "/\(RUNTEST DRPAUSE\).*$/d" output/*.svf "${_svf}"
 	sed -i "s/\(FREQUENCY\).*$/\1\t$(($frequency/1000000)).00e+06 HZ ;/g" output/*.svf "${_svf}"
-	program_jtag -i"${_svf}" -d"UsbBlaster" -f$frequency|| true
+	program_jtag -i"${_svf}" -d"${programmer}" -f$frequency|| true
 }
 
 synthesize() {
