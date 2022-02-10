@@ -10,6 +10,7 @@ environment() {
 	export chip="$(echo $programming_part | cut -d ',' -f 2)"
 	export part="$(echo $chip | cut -d '-' -f 1)"
 	export size="$(echo $chip | cut -d '-' -f 2)"
+	export footprint="$(echo $chip | cut -d '-' -f 3)"
 	export board="$(echo $2 | cut -d '_' -f 4)"
 	export programmer="$(echo $2 | cut -d '_' -f 5)"
 	export frequency="$(echo $2 | cut -d '_' -f 6)"
@@ -24,9 +25,9 @@ environment() {
 	echo "Implementation: ${implementation}"
 	echo "Target: ${target}"
 	echo "Programming Targets: ${targets}"
-	echo "Programmer frequency: ${frequency}"
-	echo "Chip: ${technology} ${part}-${size}"
-	echo "Initializing..."
+	echo "Programmer: ${programmer} @${frequency}"
+	echo "Chip: ${technology} ${part}-${size} ${footprint}"
+	echo "Initializing target ${target}..."
 	sleep 5
 }
 
@@ -111,7 +112,7 @@ translate() {
 
 mapper() {
 	pushd build/${implementation}
-	map -a ${technology} -p ${part}-${size} -t CABGA256 -s 6 -oc Commercial -ioreg b ${project}_${implementation}.ngd -o ${project}_${implementation}_map.ncd -pr ${project}_${implementation}.prf -mp ${project}_${implementation}.mrp -lpf ${project}_${implementation}_synplify.lpf -lpf ../../boards/${board}.lpf -retime -tdm -split_node -td_pack
+	map -a ${technology} -p ${part}-${size} -t ${footprint} -s 6 -oc Commercial -ioreg b ${project}_${implementation}.ngd -o ${project}_${implementation}_map.ncd -pr ${project}_${implementation}.prf -mp ${project}_${implementation}.mrp -lpf ${project}_${implementation}_synplify.lpf -lpf ../../boards/${board}.lpf -retime -tdm -split_node -td_pack
 	popd
 }
 
