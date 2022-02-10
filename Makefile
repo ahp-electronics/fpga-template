@@ -3,7 +3,7 @@ SIZE=6900C
 TECH=MachXO3LF
 BOARD=lcmxo3l
 PROG_FREQ=1000000
-PROGRAMMER=1000000
+PROGRAMMER=FT2232
 TARGETS=bypass,erase,program
 INCLUDES=-Isources/ -Itools/ispfpga/verilog/data/`echo "$(CHIP)" | tr '[:upper:]' '[:lower:]'`/
 
