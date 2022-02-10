@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<BaliProject version="3.2" title="xc-firmware" device="LFE5U-45F-6BG256C" default_implementation="xc">
+    <Options/>
+    <Implementation title="xc" dir="build/xc" description="xc" synthesis="synplify" default_strategy="AHP XC">
+        <Options def_top="top_module"/>
+        <Source name="boards/pc03.v" type="Verilog" type_short="Verilog">
+            <Options/>
+        </Source>
+        <Source name="source/main.v" type="Verilog" type_short="Verilog">
+            <Options/>
+        </Source>
+        <Source name="source/uart_rx.v" type="Verilog" type_short="Verilog">
+            <Options/>
+        </Source>
+        <Source name="source/uart_tx.v" type="Verilog" type_short="Verilog">
+            <Options/>
+        </Source>
+        <Source name="source/tx_word.v" type="Verilog" type_short="Verilog">
+            <Options/>
+        </Source>
+        <Source name="source/counter.v" type="Verilog" type_short="Verilog">
+            <Options/>
+        </Source>
+        <Source name="source/dff.v" type="Verilog" type_short="Verilog">
+            <Options/>
+        </Source>
+        <Source name="source/clock_divider.v" type="Verilog" type_short="Verilog">
+            <Options/>
+        </Source>
+        <Source name="source/pwm.v" type="Verilog" type_short="Verilog">
+            <Options/>
+        </Source>
+        <Source name="source/indicators.v" type="Verilog" type_short="Verilog">
+            <Options/>
+        </Source>
+        <Source name="source/cmd_parser.v" type="Verilog" type_short="Verilog">
+            <Options/>
+        </Source>
+        <Source name="source/spi_slave.v" type="Verilog" type_short="Verilog">
+            <Options/>
+        </Source>
+        <Source name="source/correlator.v" type="Verilog" type_short="Verilog">
+            <Options/>
+        </Source>
+        <Source name="boards/xc32.v" type="Verilog" type_short="Verilog">
+            <Options top_module="top_module"/>
+        </Source>
+        <Source name="boards/flash_bypass.xcf" type="Programming Project File" type_short="Programming" excluded="TRUE">
+            <Options/>
+        </Source>
+        <Source name="boards/flash_erase.xcf" type="Programming Project File" type_short="Programming" excluded="TRUE">
+            <Options/>
+        </Source>
+        <Source name="boards/flash_program.xcf" type="Programming Project File" type_short="Programming" excluded="TRUE">
+            <Options/>
+        </Source>
+        <Source name="boards/flash_program4.xcf" type="Programming Project File" type_short="Programming" excluded="TRUE">
+            <Options/>
+        </Source>
+        <Source name="boards/flash_test.xcf" type="Programming Project File" type_short="Programming" excluded="TRUE">
+            <Options/>
+        </Source>
+        <Source name="boards/flash_unlock.xcf" type="Programming Project File" type_short="Programming" excluded="TRUE">
+            <Options/>
+        </Source>
+        <Source name="boards/flash_verify.xcf" type="Programming Project File" type_short="Programming" excluded="TRUE">
+            <Options/>
+        </Source>
+        <Source name="boards/pc03.lpf" type="Logic Preference" type_short="LPF">
+            <Options/>
+        </Source>
+    </Implementation>
+    <Strategy name="AHP XC" file="project.sty"/>
+</BaliProject>

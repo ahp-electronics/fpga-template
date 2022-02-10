@@ -1,0 +1,97 @@
+<?xml version='1.0' encoding='utf-8' ?>
+<!DOCTYPE		ispXCF	SYSTEM	"IspXCF.dtd" >
+<ispXCF version="3.11.0">
+	<Comment></Comment>
+	<Chain>
+		<Comm>JTAG</Comm>
+		<Device>
+			<SelectedProg value="TRUE"/>
+			<Pos>1</Pos>
+			<Vendor>VENDOR</Vendor>
+			<Family>TECHNOLOGY</Family>
+			<Name>PART-LUTSIZE</Name>
+			<Package>All</Package>
+			<Bypass>
+				<InstrLen>8</InstrLen>
+				<InstrVal>11111111</InstrVal>
+				<BScanLen>1</BScanLen>
+				<BScanVal>0</BScanVal>
+			</Bypass>
+			<FileTime>02/06/22 16:53:49</FileTime>
+			<Operation>SPI Flash Erase All</Operation>
+			<Option>
+				<SVFVendor>JTAG STANDARD</SVFVendor>
+				<AccessMode>SPI Flash Background Programming</AccessMode>
+			</Option>
+			<FPGALoader>
+			<CPLDDevice>
+				<Device>
+					<Pos>1</Pos>
+					<Vendor>Lattice</Vendor>
+					<Family>TECHNOLOGY</Family>
+					<Name>PART-LUTSIZE</Name>
+					<IDCode>0x41112043</IDCode>
+					<Package>All</Package>
+					<PON>PART-LUTSIZE</PON>
+					<Bypass>
+						<InstrLen>8</InstrLen>
+						<InstrVal>11111111</InstrVal>
+						<BScanLen>1</BScanLen>
+						<BScanVal>0</BScanVal>
+					</Bypass>
+					<MaskFile>PWD/tools//data/vmdata/database/xpga/ecp5/PART-LUTSIZE.msk</MaskFile>
+					<Operation>Bypass</Operation>
+					<Option>
+						<SVFVendor>JTAG STANDARD</SVFVendor>
+						<IOState>HighZ</IOState>
+						<PreloadLength>510</PreloadLength>
+						<IOVectorData>0xFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF</IOVectorData>
+						<AccessMode>JTAG</AccessMode>
+					</Option>
+				</Device>
+			</CPLDDevice>
+			<FlashDevice>
+				<Device>
+					<Pos>1</Pos>
+					<Vendor>VENDOR</Vendor>
+					<Family>SPI Serial Flash</Family>
+					<Name>FLASH</Name>
+					<IDCode>JTAGID</IDCode>
+					<Package>8-pin SOIC</Package>
+					<Operation>SPI Flash Erase All</Operation>
+					<AddressBase>0x00000000</AddressBase>
+					<EndAddress>0x00FFFFFF</EndAddress>
+					<DeviceSize>128</DeviceSize>
+					<DataSize>16777216</DataSize>
+					<NumberOfDevices>1</NumberOfDevices>
+				<ReInitialize value="FALSE"/>
+				</Device>
+			</FlashDevice>
+			<FPGADevice>
+				<Device>
+					<Pos>1</Pos>
+					<Name></Name>
+					<Option>
+						<SVFVendor>JTAG STANDARD</SVFVendor>
+					</Option>
+				</Device>
+			</FPGADevice>
+			</FPGALoader>
+		</Device>
+	</Chain>
+	<ProjectOptions>
+		<Program>SEQUENTIAL</Program>
+		<Process>ENTIRED CHAIN</Process>
+		<OperationOverride>No Override</OperationOverride>
+		<StartTAP>TLR</StartTAP>
+		<EndTAP>TLR</EndTAP>
+		<DisableCheckBoard value="TRUE"/>
+		<VerifyUsercode value="FALSE"/>
+		<TCKDelay>1</TCKDelay>
+	</ProjectOptions>
+	<CableOptions>
+		<CableName>USB2</CableName>
+		<PortAdd>FTUSB-0</PortAdd>
+		<USBID>TTL232R Location 0000 Serial TTL232R</USBID>
+	</CableOptions>
+</ispXCF>
