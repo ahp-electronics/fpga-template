@@ -2,18 +2,18 @@
 
 environment() {
 	export project="fpga_firmware"
-	export target=$1
-	export implementation="$(echo $2 | cut -d '_' -f 1)"
-	export targets="$(echo $2 | cut -d '_' -f 2 | tr -s ',' ' ')"
-	export programming_part="$(echo $2 | cut -d '_' -f 3)"
+	export implementation="$(echo $1 | cut -d '_' -f 1)"
+	export target="$(echo $1 | cut -d '_' -f 2)"
+	export targets="$(echo $1 | cut -d '_' -f 3 | tr -s ',' ' ')"
+	export programming_part="$(echo $1 | cut -d '_' -f 4)"
 	export technology="$(echo $programming_part | cut -d ',' -f 1)"
 	export chip="$(echo $programming_part | cut -d ',' -f 2)"
 	export part="$(echo $chip | cut -d '-' -f 1)"
 	export size="$(echo $chip | cut -d '-' -f 2)"
 	export footprint="$(echo $chip | cut -d '-' -f 3)"
-	export board="$(echo $2 | cut -d '_' -f 4)"
-	export programmer="$(echo $2 | cut -d '_' -f 5)"
-	export frequency="$(echo $2 | cut -d '_' -f 6)"
+	export board="$(echo $1 | cut -d '_' -f 5)"
+	export programmer="$(echo $1 | cut -d '_' -f 6)"
+	export frequency="$(echo $1 | cut -d '_' -f 7)"
 	export TOOLSDIR=${PWD}/tools/
 	export FOUNDRY=${TOOLSDIR}/ispfpga
 	export TCL_LIBRARY=${TOOLSDIR}/tcltk/lib/tcl8.5
@@ -35,11 +35,10 @@ svf() {
 	svf="${PWD}/output/flash_${implementation}_${1}.svf"
 	tmpfile="/tmp/$$.xcf"
 	echo $project ${implementation} $1
-	sed -e ${part}
 	sed -e "s:PART:${part}:g" "${PWD}/boards/flash_${1}.xcf" | \
-	sed -e "s:SIZE:${size}:g" "${PWD}/boards/flash_${1}.xcf" | \
-	sed -e "s:TECHOLOGY:${technology}:g" "${PWD}/boards/flash_${1}.xcf" | \
-	sed -e "s:IMPLEMENTATION:${implementation}:g" "${PWD}/boards/flash_${1}.xcf" | \
+	sed -e "s:SIZE:${size}:g" | \
+	sed -e "s:TECHNOLOGY:${technology}:g" | \
+	sed -e "s:IMPLEMENTATION:${implementation}:g" | \
 	sed -e "s:PWD:${PWD}:g" | \
 	sed -e "s:PROJECT:${project}:g" \
 	> "${tmpfile}"
@@ -56,7 +55,6 @@ program() {
 		svf $t
 		cat "${PWD}/output/flash_${implementation}_${t}.svf" >> $_svf
 	done
-        sed -i "/\(RUNTEST DRPAUSE\).*$/d" output/*.svf "${_svf}"
 	sed -i "s/\(FREQUENCY\).*$/\1\t$(($frequency/1000000)).00e+06 HZ ;/g" output/*.svf "${_svf}"
 	program_jtag -i"${_svf}" -d"${programmer}" -f$frequency|| true
 }

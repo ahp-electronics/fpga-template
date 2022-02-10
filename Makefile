@@ -9,7 +9,7 @@ PROGRAMMER=FT2232
 INCLUDES=-Isources/ -Itools/ispfpga/verilog/data/`echo "$(CHIP)" | tr '[:upper:]' '[:lower:]'`/
 
 %:
-	./flash.sh build $@_$(PROG_TARGETS)_$(TECH),$(CHIP)-$(SIZE)-$(FOOTPRINT)_$(BOARD)_$(PROGRAMMER)_$(PROG_FREQ)
+	./flash.sh $@_build_$(PROG_TARGETS)_$(TECH),$(CHIP)-$(SIZE)-$(FOOTPRINT)_$(BOARD)_$(PROGRAMMER)_$(PROG_FREQ)
 
 %_program:
-	./flash.sh program $@_$(PROG_TARGETS)_$(TECH),$(CHIP)-$(SIZE)-$(FOOTPRINT)_$(BOARD)_$(PROGRAMMER)_$(PROG_FREQ)
+	./flash.sh $@_$(PROG_TARGETS)_$(TECH),$(CHIP)-$(SIZE)-$(FOOTPRINT)_$(BOARD)_$(PROGRAMMER)_$(PROG_FREQ)
