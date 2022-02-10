@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<BaliProject version="3.2" title="fpga-template" device="LFE5U-45F-6BG256C" default_implementation="template">
+    <Options/>
+    <Implementation title="template" dir="build/template" description="template" synthesis="synplify" default_strategy="FPGA Template">
+        <Options def_top="top_module"/>
+        <Source name="boards/pc03.v" type="Verilog" type_short="Verilog">
+            <Options/>
+        </Source>
+        <Source name="source/main.v" type="Verilog" type_short="Verilog">
+            <Options/>
+        </Source>
+        <Source name="boards/template.v" type="Verilog" type_short="Verilog">
+            <Options top_module="top_module"/>
+        </Source>
+        <Source name="boards/flash_bypass.xcf" type="Programming Project File" type_short="Programming" excluded="TRUE">
+            <Options/>
+        </Source>
+        <Source name="boards/flash_erase.xcf" type="Programming Project File" type_short="Programming" excluded="TRUE">
+            <Options/>
+        </Source>
+        <Source name="boards/flash_program.xcf" type="Programming Project File" type_short="Programming" excluded="TRUE">
+            <Options/>
+        </Source>
+        <Source name="boards/flash_test.xcf" type="Programming Project File" type_short="Programming" excluded="TRUE">
+            <Options/>
+        </Source>
+        <Source name="boards/flash_unlock.xcf" type="Programming Project File" type_short="Programming" excluded="TRUE">
+            <Options/>
+        </Source>
+        <Source name="boards/pc03.lpf" type="Logic Preference" type_short="LPF">
+            <Options/>
+        </Source>
+    </Implementation>
+    <Strategy name="FPGA Template" file="project.sty"/>
+</BaliProject>
