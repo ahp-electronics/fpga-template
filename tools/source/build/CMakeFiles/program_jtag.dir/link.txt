@@ -1,0 +1,1 @@
+/usr/bin/cc  -D_FORTIFY_SOURCE=2 -fstack-protector-all -fPIE -O1 -Wa,--noexecstack  -Wall -Wextra -g    -Wl,-z,nodump -Wl,-z,noexecstack -Wl,-z,relro -Wl,-z,now -pie  -rdynamic CMakeFiles/program_jtag.dir/prog.c.o  -o program_jtag  -lurjtag 

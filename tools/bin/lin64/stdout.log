@@ -1,0 +1,20 @@
+Running in Lattice mode
+
+Starting:    /home/plato/dev/github/gt2-controllers/tools/synpbase/linux_a_64/mbin/synbatch
+Install:     /home/plato/dev/github/gt2-controllers/tools/synpbase
+Hostname:    Plato
+Date:        Sat Jun  5 18:13:58 2021
+Version:     N-2018.03L-SP1-1
+
+Arguments:   -product synplify_pro -batch gt2-controllers_impl_synplify.tcl
+ProductType: synplify_pro
+
+
+
+
+Error: At line 1 while processing "gt2-controllers_impl_synplify.tcl"
+couldn't read file "gt2-controllers_impl_synplify.tcl": no such file or directory
+TCL script complete: "gt2-controllers_impl_synplify.tcl"
+TCL script had errors: "gt2-controllers_impl_synplify.tcl"
+exit status=9
+exit status=9

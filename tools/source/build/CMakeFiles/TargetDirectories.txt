@@ -1,0 +1,7 @@
+/home/plato/dev/github/xc-firmware/tools/source/build/CMakeFiles/install/strip.dir
+/home/plato/dev/github/xc-firmware/tools/source/build/CMakeFiles/install/local.dir
+/home/plato/dev/github/xc-firmware/tools/source/build/CMakeFiles/install.dir
+/home/plato/dev/github/xc-firmware/tools/source/build/CMakeFiles/list_install_components.dir
+/home/plato/dev/github/xc-firmware/tools/source/build/CMakeFiles/rebuild_cache.dir
+/home/plato/dev/github/xc-firmware/tools/source/build/CMakeFiles/edit_cache.dir
+/home/plato/dev/github/xc-firmware/tools/source/build/CMakeFiles/program_jtag.dir

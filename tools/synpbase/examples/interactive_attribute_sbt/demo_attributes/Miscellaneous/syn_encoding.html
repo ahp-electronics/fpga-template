@@ -1,0 +1,59 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2 Final//EN" "http://www.w3.org/MarkUp/Wilbur/HTML32.dtd">
+<html>
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
+    <meta name="GENERATOR" content="Quadralay WebWorks Publisher Professional Edition 7.0.2.1206">
+    <meta name="TEMPLATEBASE" content="fpga_ug">
+    <meta name="LASTUPDATED" content="04/12/12 14:32:03">
+	
+    <title> Live demo examples </title>
+  </head>
+
+  <body>
+  
+<center><font face="Arial, Helvetica, sans-serif" size="2"></center>
+
+<a name="wp792415"> </a><h1><div align="center"><font color="Black" face="Arial, Helvetica, sans-serif" size="5">
+syn_encoding attribute
+</font></div></h1>
+
+<a name="wp792416"> </a><p><font face="Arial, Helvetica, sans-serif" size="3">
+ 
+syn_encoding attribute specifies the encoding style for the FSM in the design. This attribute takes effect only when FSM Compiler is enabled. You cannot set this attribute at a global level.</p> 
+
+<a name="wp792416"> </a><p><font face="Arial, Helvetica, sans-serif" size="3"> Values:</p>	
+<a name="wp792416"> </a><p><font face="Arial, Helvetica, sans-serif" size="3"> default: mapper automatically picks an encoding style that results in the best performance for the FSM.</p>
+<a name="wp792416"> </a><p><font face="Arial, Helvetica, sans-serif" size="3"> onehot: Implements FSM using one flip-flop per state. Only two bits of the state register change and only one of the state register is hot (decide the state).</p>
+<a name="wp792416"> </a><p><font face="Arial, Helvetica, sans-serif" size="3"> gray: Implements the FSM using gray coding. Only one of the state register change at a time and all the state register is hot (decides the state).</p>
+<a name="wp792416"> </a><p><font face="Arial, Helvetica, sans-serif" size="3"> sequential:  The synthesis tool makes no attempt at limiting the number of bits that can change at a time and all the state register is hot (decides the state). </p>
+<a name="wp792416"> </a><p><font face="Arial, Helvetica, sans-serif" size="3"> safe:  Implements the state machine in the default encoding and adds reset logic to force the state machine to a known state if it reaches an invalid state.</p>
+<a name="wp792416"> </a><p><font face="Arial, Helvetica, sans-serif" size="3"> original: Tool implements state machine in the user specified style and does the reachability analysis</p>
+<a name="wp792416"> </a><p><font face="Arial, Helvetica, sans-serif" size="3"> </p>
+<a name="wp792416"> </a><p><font face="Arial, Helvetica, sans-serif" size="3"> </p> 
+<a name="wp792416"> </a><p><font face="Arial, Helvetica, sans-serif" size="3"> </p>
+
+
+<a name="wp792073"> </a><p><font face="Arial, Helvetica, sans-serif" size="3">
+For detailed information about the attributes, use the following: 
+</font></p>
+
+<ul>
+
+<a name="wp792075"> </a><li><font face="Arial, Helvetica, sans-serif" size="3">Use help buttons in the respective attribute wizard  </font></li>
+
+<a name="wp792077"> </a><li><font face="Arial, Helvetica, sans-serif" size="3">Synplicity online help of the synthesis tool</font></li>
+</ul>
+
+<a name="wp792065"> </a><p><font face="Arial, Helvetica, sans-serif" size="3">
+For other questions and issues, please contact support at www.solvnet.com
+</font></p>
+
+<a name="wp787639"> </a><p><font face="Arial, Helvetica, sans-serif" size="3">
+
+</font></p>
+
+    
+    <hr>
+
+  </body>
+</html>

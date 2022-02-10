@@ -1,0 +1,651 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<dynamic_flows>
+	<!-- =========================================================================================== -->
+	<!-- Define Dynamic Job flows for different implementation types.                                -->
+	<!-- <implementation>:= defines a category or type of implementation.                            -->
+	<!--                    This will contain several <flow>s.                                       -->
+	<!-- <flow>:=           defines a job flow that is a sequence of other <flow>s and <job_ref>     -->
+	<!-- <flow_ref>:=       reference to <flow> defined earlier in the file.                         -->
+	<!-- <job_ref>:=        refers to a specific job. The <name> field must match a pre-defined      -->
+	<!--                    job in the executable, or in productconfig job definition.               -->
+	<!-- Fields:                                                                                     -->
+	<!-- <name>          := name of object                                                           -->
+	<!-- <alias>         := also known as  (aka)                                                     -->
+	<!-- <category>      := implementation type                                                      -->
+	<!-- <label>         := object label for display purposes                                        -->
+	<!-- <default_flow>  := default flow to RUN for implementation                                   -->
+	<!-- <hidden>        := hide in Certify flow view.                                               -->
+	<!-- <treeVisibility>:= Visibility in process view tree.                                         -->
+	<!--                    show - default. show it.                                                 -->
+	<!--                    hide - hide this and all descendents                                     -->
+	<!--                    hide_children = hide all sub-elements                                    -->
+	<!--                    hide_parent = hide this job, but show all children                       -->
+	<!-- =========================================================================================== -->
+
+	<implementations>
+	
+		<!-- ============================= -->
+		<!--  Certify Job Flows            -->
+		<!-- ============================= -->
+		<implementation category="rtl_partition" name="rtl_partition_flow" default_flow="true" default_run_flow="rtl_prep">
+			<flow name="rtl_prep" alias="compile" label="RTL Preparation">
+				<job_ref name="board_compiler" label="Compile Board" />
+				<job_ref name="cdc_processor" label="Compiler Constraint Processor" hidden_not_needed="true" hidden="true" />
+				<job_ref name="compiler" label="Compile Design" />
+				<job_ref name="cdc_applicator" label="Compiler Constraint Applier" hidden_not_needed="true" hidden="true" />
+				<job_ref name="netlist_optimizer" label="Optimize Design" />
+				<job_ref name="property_annotator" label="Annotate Properties" />
+				<job_ref name="premap" label="Premap"/>
+				<job_ref name="fpga_mapper" label="Map &amp; Optimize"/>
+				<job_ref name="partition_premap" label="Certify Premap" />
+			</flow>
+
+			<flow name="est_resources" label="Resource Estimation" >
+				<job_ref name="cdc_processor" label="Compiler Constraint Processor" hidden_not_needed="true" hidden="true" />
+				<job_ref name="compiler" label="Compile Input" />
+				<job_ref name="cdc_applicator" label="Compiler Constraint Applier" hidden_not_needed="true" hidden="true" />
+				<job_ref name="macid" label="Create MAC Hierarchy" />
+				<job_ref name="linker" label="HPM Link" />
+				<job_ref name="netlist_optimizer" label="Optimize Design" />
+				<job_ref name="multi_srs_gen" label="Multi-srs Generator" hidden_not_needed="true" hidden="true" />
+<!-- will be added when certify support distributed jobs
+				<job_ref name="od_constraint_applier" label="On Demand Constraint Applier"/>
+				<job_ref name="global_prep" label="Global Preparation"/>
+-->
+				<job_ref name="partition_optimizer" label="WriteNetlist Generator"/>
+				<job_ref name="planner" label="Planner"/>
+				<job_ref name="xilinx_constraints_processor" label="Process Xilinx Constraints"/>
+				<job_ref name="partition_premap" label="Certify Premap"/>
+				<job_ref name="premap" label="Premap"/>
+				<job_ref name="fpga_mapper" label="Map &amp; Optimize"/>
+			</flow>
+			
+			<flow name="helper_jobs" label="Utility Jobs" hidden="true">
+				<job_ref name="fpga_mapper" />
+				<job_ref name="hdl_info_gen" label="HDL Data Generator"/>
+				<job_ref name="constraint_check_job" label="Constraint Checker"/>
+				<job_ref name="report_clocks" label="Generate Clock Report"/>
+				<job_ref name="syntax_check" label="Syntax Check" />
+				<job_ref name="synthesis_check" label="Synthesis Check" />
+				<job_ref name="archive" label="Archive Syntax Check" />
+				<job_ref name="estimate_area_premap" label="Estimate Area Premap"/>
+				<job_ref name="estimate_timing_premap" label="Estimate Timing Premap"/>
+				<job_ref name="estimate_cpm_premap" label="Estimate CPM Premap"/>
+				<job_ref name="compile_dm" label="Compile DM (Database Model)"/>
+			</flow>
+
+			<flow name="fsm_explorer" label="FSM Explorer" hidden="true">
+				<job_ref name="compiler" />
+				<job_ref name="property_annotator" label="Annotate Properties"/>
+			</flow>
+
+			<!-- Running rtl_prep in constraint_check mode does the contraint check -->
+			<flow name="constraint_check" label="Constraint Check" mode="constraint_check">
+				<job_ref name="rtl_prep" />
+			</flow>
+
+			<flow name="estimate_area" label="Estimate Area for Partitioning##(optional)" >
+				<job_ref name="estimate_area_premap" label="Estimate Area Premap" />
+				<job_ref name="estimate_area_job" label="Estimate Area Job for Partitioning" />
+			</flow>
+			<job_ref name="estimate_area_job" label="Estimate Area Job for Partitioning" hidden="true" />
+			<job_ref name="estimate_area_fast" label="Fast Estimate Area" hidden="true"/>
+			<job_ref name="estimate_timing_cpm" label="Estimate Timing for CPM Qualified Nets (can be used during manual CPM insertion)##(optional)"/>
+			<job_ref name="hstdm_generate" label="Do HSTDM Assignments##(HSTDM mode only)"/>
+			<job_ref name="reset_generate" label="Do HAPS Reset Configuration" hidden="true"/>
+			<flow_ref name="slp_generate" />
+			<job_ref name="timing_analysis" alias="timing" label="System Level Timing Analysis##(optional)"/>
+
+			<flow name="estimate_timing" label="Estimate Time-Budgets">
+				<job_ref name="estimate_timing_premap" hidden="true" />
+				<job_ref name="estimate_timing_job" />
+			</flow>
+			<flow name="estimate_timing_cpm" label="Estimate Timing for CPM Qualified Nets (can be used during manual CPM insertion)##(optional)">
+				<job_ref name="estimate_cpm_premap" hidden="true" />
+				<job_ref name="estimate_timing_cpm_job" />
+			</flow>
+			<flow name="estimate_cpm_clock_frequency" label="Estimate CPM Clock##(optional)" >
+				<job_ref name="estimate_cpm_premap"  hidden="true" />
+				<job_ref name="estimate_cpm_clock_frequency_job" />
+			</flow>
+   
+			<flow name="compile_vm" label="Compile VM" mode="compile_vm">
+				<job_ref name="cdc_processor" label="Compiler Constraint Processor" hidden_not_needed="true" hidden="true" />
+				<job_ref name="compiler" label="Compile Input" />
+				<job_ref name="cdc_applicator" label="Compiler Constraint Applier" hidden_not_needed="true" hidden="true" />
+				<job_ref name="linker" label="HPM Link" />
+				<job_ref name="premap_vm" label="Premap VM"/>
+			</flow>
+		</implementation>
+
+		<!-- ============================= -->
+		<!--  ProtoCompiler Job Flows      -->
+		<!-- ============================= -->
+		<implementation category="protocompiler" name="protocompiler" default_flow="true" default_run_flow="synthesis" >
+			<flow name="utility_flow" label="Utility Jobs" hidden="true">
+				<job_ref name="hdl_info_gen" label="HDL Data Generator"/>
+				<job_ref name="compile_dm" label="Compile DM (Database Model)"/>
+				<job_ref name="timing" label="Timing Analysis"/>
+				<job_ref name="constraint_check_job" label="Constraint Checker"/>
+				<job_ref name="constraint_syntax_check" label="Constraint Syntax Checker"/>
+				<job_ref name="report_clocks" label="Generate Clock Report"/>
+				<job_ref name="report_gated_clocks" label="Report gated and generated clock summary"/>
+				<job_ref name="write_netlist" label="Generate Output Netlist"/>
+				<job_ref name="write_netlist_premap" label="Generate Output Netlist"/>
+				<job_ref name="write_netlist_prepartition" label="Generate Output Netlist"/>
+				<job_ref name="write_netlist_partition" label="Generate Output Netlist"/>
+				<job_ref name="write_netlist_system_route" label="Generate Output Netlist"/>
+				<job_ref name="write_netlist_system_generate" label="Generate Output Netlist"/>
+				<job_ref name="activity_analysis" label="Activity Analysis"/>
+				<job_ref name="syntax_check" label="Syntax Check" />
+				<job_ref name="synthesis_check" label="Synthesis Check" />
+				<job_ref name="rtl_linker" label="RTL Linker" />
+				<job_ref name="archive" label="Archive Syntax Check" />
+				<job_ref name="power_analysis" label="Power Analysis" />
+				<job_ref name="generate_context" label="Generate Instance Budgets" />
+				<job_ref name="generate_timing_budgets" label="Generate Timing Budgets" />
+				<job_ref name="generate_instance_constraints" label="Generate Instance Constraints" />
+				<job_ref name="planner" label="Partitioner" />
+				<job_ref name="congestion_analysis_mapper" label="Congestion Report" />
+				<job_ref name="postpar_resynthesis_mapper" label="Post Place &amp; Route Resynthesis" />
+				<job_ref name="vivado_par" label="Vivado Place &amp; Route" />
+				<job_ref name="xilinx_xtclsh" label="Xilinx xtclsh Place &amp; Route" />
+				<job_ref name="par_explorer" label="Place &amp; Route Explorer" />
+				<job_ref name="identify_script" alias="debug_eco" label="Identify Debug ECO"/>
+				<job_flow name="postpar_resynthesis" label="Post Place &amp; Route Resynthesis" />
+			</flow>
+
+			<flow name="pre_instrument" label="Identify DB Generator" >
+				<job_ref name="identify_db_generator" label="Identify Database Generator" hidden_not_needed="true" />
+			</flow>
+
+			<flow name="compiler_db" label="Compile with Debug" parallel="true" >
+				<job_ref name="identify_db_generator_parallel" label="Identify Database Generator" hidden_not_needed="true" nonblocking="false" />
+				<job_ref name="compiler" label="Compile Input" />
+			</flow>
+			<flow name="identify_cdc_generator" label="Compile with Debug" >
+				<job_ref name="identify_db_generator_parallel" label="Identify Database Generator"  />
+				<job_ref name="identify_compile" label="Identify Compile"  />
+			</flow>
+			<flow name="compiler_cdc" label="Compile with CDC" >
+				<job_ref name="cdc_processor" label="Compiler Constraint Processor"  />
+				<job_ref name="compiler" label="Compile Input" />
+			</flow>
+			<flow name="compiler_inc_db" label="Compile with Debug" parallel="true" >
+				<!-- NOTE: These 2 flows run parallel" -->
+				<flow_ref name="identify_cdc_generator" />
+				<flow_ref name="compiler_cdc" />
+			</flow>
+			<flow name="post_compile_processes" label="Post Compile Processes" >
+				<job_ref name="cdc_applicator" label="Compiler Constraint Applier"  />
+				<job_ref name="multi_srs_gen" label="Multi-srs Generator"  hidden="true" />
+				<job_ref name="netlist_optimizer" label="Optimize Design" />
+				<job_ref name="global_optimizer" label="Global Optimizer"  />
+				<job_ref name="skeleton_netlist_generator" label="Skeleton Netlist Generator" />
+			</flow>
+			<flow name="main_compile_processes" label="Main Compile Processes" >
+				<job_ref name="identify_db_generator" label="Identify Database Generator" hidden_not_needed="true" />
+				<job_ref name="cdc_processor" label="Compiler Constraint Processor" hidden_not_needed="true" />
+				<job_ref name="identify_compile" label="Compile Instrumentation" hidden_not_needed="true" />
+				<flow_ref name="compiler_db" />
+			</flow>
+			<flow name="idc_applier" label="IDC Debug Applier" >
+				<job_ref name="identify_compile" label="Identify Compile"  />
+				<job_ref name="compile_debug_applier" label="Compile Debug Applier"  />
+				<flow_ref name="post_compile_processes" />
+			</flow>
+			<flow name="compile_flow_inc" label="Compile HDL/EDIF" >
+				<flow_ref name="compiler_inc_db" />
+				<job_ref name="compile_debug_applier" label="Compile Debug Applier"  />
+				<flow_ref name="post_compile_processes" />
+			</flow>
+			<flow name="compile_flow" label="Compile HDL/EDIF" >
+				<flow_ref name="main_compile_processes" />
+				<flow_ref name="post_compile_processes" />
+			</flow>
+			<flow name="pre_map" label="Pre-map" mode="can_be_distributed">
+				<job_ref name="netlist_optimizer" label="Optimize Design" />
+				<job_ref name="trimdep" label="Trim Dependent Table" hidden_not_needed="true" hidden="true" />
+				<job_ref name="premap" label="Premap"/>
+				<!-- Removed, insufficiently tested, use nfilter instead. 
+				<job_ref name="od_netlist_editor" label="On Demand Netlist Editor"/>
+-->
+				<job_ref name="od_constraint_applier" label="On Demand Constraint Applier"/>
+				<job_ref name="od_upf_applier" label="On Demand UPF Applier"/>
+				<job_ref name="global_prep" label="Global Preparation"/>
+			</flow>
+			<flow name="distributed_prep" label="Distributed Ultra Flow Preparation">
+				<job_ref name="trimdep" label="Trim Dependent Table" hidden_not_needed="true" hidden="true" />
+				<job_ref name="od_constraint_applier" label="On Demand Constraint Applier"/>
+<!-- vsameer: disable global prep for distributed estimation.
+     certify premap is run in this flow before estimation and hence this step is not needed.
+				<job_ref name="global_prep" label="Global Preparation"/>
+-->
+			</flow>
+			<flow name="report_clock_tree" label="Report Clock Tree Conversion">
+				<job_ref name="on_demand_constraint_process" label="On-demand Constraint Process" hidden_not_needed="true" hidden="true" />
+				<job_ref name="clock_tree_conversion" label="Clock Tree Conversion"/>
+				<job_ref name="multi_srs_gen_for_clock_tree" label="Multi-srs Generator" hidden_not_needed="true" hidden="true" mode="no_trimdep" />
+			</flow>
+			<!-- flow name="link_pre_partition" label="Report Clock Tree Conversion" parallel="true" -->
+			<flow name="link_pre_partition" label="Link Bottom-up Prepartition States" >
+				<job_ref name="link_clock_tree" label="Link Clock Tree Netlists" />
+				<job_ref name="link_pre_part" label="Link Subsystem Netlists"/>
+				<job_ref name="subsystem_const_prop" label="Subsystem Constant Propagation"  />
+			</flow>
+			<flow name="compile_rtl_hier" label="Compile RTL Hierarchy" >
+				<job_ref name="cdc_processor" label="Compiler Constraint Processor" hidden_not_needed="true" />
+				<job_ref name="compiler" label="Compile Input" />
+				<job_ref name="cdc_applicator" label="Compiler Constraint Applier" hidden_not_needed="true" />
+				<job_ref name="netlist_optimizer" label="Optimize Design" />
+				<job_ref name="rtl_linker" label="RTL Linker" hidden_not_needed="true" />
+			</flow>
+			<flow name="compile_partition" label="RTL Compile" mode="no_trimdep">
+				<job_ref name="cdc_processor" label="Compiler Constraint Processor" hidden_not_needed="true" hidden="true" />
+				<job_ref name="identify_compile" label="Identify Compile" hidden_not_needed="true" />
+				<job_ref name="compiler" label="Compile Design" />
+				<job_ref name="cdc_applicator" label="Compiler Constraint Applier" hidden_not_needed="true" hidden="true" />
+				<job_ref name="multi_srs_gen" label="Multi-srs Generator" hidden_not_needed="true" hidden="true" mode="no_trimdep" />
+			</flow>
+			<flow name="distributed_estimation" label="Clock Tree and Estimation">
+				<flow_ref name="distributed_prep" mode="distributed_estimation" />
+				<job_ref name="estimate_area_job" label="Estimate Area" />
+			</flow>
+			<flow name="partition_premap_estimation" label="Partition Premap and Estimate Area" parallel="false">
+				<job_ref name="partition_premap" label="ProtoCompiler Pre_map" />
+				<flow_ref name="distributed_estimation" mode="distributed_estimation" />
+			</flow>			
+			<flow name="pre_partition" label="Prepartition Flow">
+				<job_ref name="ident_netlist_script_gen" label="Identify Script Generator" />
+				<job_ref name="netlist_optimizer" label="Optimize Design" />
+				<job_ref name="netlist_autodissolve" label="Autodissolve Design" />
+				<flow_ref name="partition_premap_estimation" mode="Partition Premap and Estimation" />
+			</flow>
+			<flow name="report_target_system" label="Report Target System">
+				<job_ref name="target_system_spec_gen" label="Target System Spec Converter" />
+				<job_ref name="target_system_report" label="Target System Report" />
+			</flow>
+			<flow name="compile" label="Compile" >
+				<flow_ref name="compile_flow" />
+				<job_ref name="partition_optimizer" label="WriteNetlist Generator"/>
+				<job_ref name="fsm_explorer_job" label="FSM Explorer"/>
+				<job_ref name="planner" label="Planner"/>
+				<job_ref name="xilinx_constraints_processor" label="Process Xilinx Constraints"/>
+				<job_ref name="io_placement_conversion" label="IO Placement Conversion"/>
+				<job_ref name="partition_premap" label="ProtoCompiler Pre_map"/>
+				<job_ref name="premap" label="Premap"/>
+			</flow>
+
+			<flow name="compile_hier" label="Hierarchical Compile" >
+			</flow>
+
+			<flow name="compile_vm" label="Compile VM" mode="compile_vm">
+				<job_ref name="premap" label="Pre-mapping"/>
+			</flow>
+
+			<flow name="rtl_check" label="RTL Check" mode="rtl_check">
+				<job_ref name="cdc_processor" label="Compiler Constraint Processor" hidden_not_needed="true" />
+				<job_ref name="compiler" label="Compile Input" />
+				<job_ref name="cdc_applicator" label="Compiler Constraint Applier" hidden_not_needed="true" />
+				<job_ref name="linker" label="Hierarchical Project Link" />
+				<job_ref name="premap" label="Premap"/>
+			</flow>
+
+			<flow name="map" label="Map" alias="synthesis_only" mode="can_be_distributed">
+	<!--
+	    vsameer
+	    added mode="can_be_distributed to this job.
+	    
+	    DataState::getRTLNetlistFileName is dont special handling for getting the netlist input
+	    from the previous job when distributed synthesis is enabled.
+	    The only place this should be applicable is single fpga synthesis in PC.	
+	-->
+				<job_ref name="fpga_mapper" label="Map &amp; Optimize" mode="can_be_distributed"/>	
+			</flow>
+
+			<!-- Running premap or partition_premap in constraint_check mode does the contraint check -->
+			<flow name="constraint_check" label="Constraint Check" mode="constraint_check">
+				<job_ref name="premap" label="Premap"/>
+			</flow>
+			<flow name="estimate_time_budgets" label="Estimate Time Budgets" mode="estimate_time_budgets">
+				<flow_ref name="compile" />
+				<flow_ref name="map" />
+			</flow>
+			<flow name="fsm_explorer" label="FSM Explorer" mode="fsm_explorer">
+				<flow_ref name="compile" />
+				<flow_ref name="map" />
+			</flow>
+			<flow name="partition" label="Partition">
+				<job_ref name="target_system_spec_gen" label="Target System Spec Converter" />
+				<job_ref name="auto_partitioner" label="Auto-Partitioner" />
+				<job_ref name="partition_netlist_build" label="Prototype Netlist Generation" />
+			</flow>
+			<flow name="partitioner" label="Partitioner">
+				<job_ref name="planner" />
+			</flow>
+			<flow name="system_route" label="System Router">
+				<job_ref name="target_system_spec_gen" label="Target System Spec Converter" />
+				<job_ref name="estimate_timing_cpm_job" label="Timing Estimation" />
+				<job_ref name="slr_partition" label="SLR Estimation" />
+				<job_ref name="system_router" label="System Routing and TDM Insertion" />
+				<job_ref name="partition_netlist_build" label="Post-Route Netlist Generation" />
+			</flow>
+			<flow name="report_slr" label="Report Estimated SLR Assignments" mode="report_slr">
+				<job_ref name="target_system_spec_gen" label="Target System Spec Converter" />
+				<job_ref name="slr_partition" label="SLR Estimation" />
+			</flow>
+			<flow name="system_generate" label="System Generate">
+				<flow_ref name="slp_generate" />
+				<job_ref name="estimate_timing_job" label="Estimate Time-Budgets" />
+				<!-- We don't want to call estimate_timing_premap for PC 
+				<flow_ref name="estimate_timing" />   
+				-->
+			</flow>
+			<flow name="estimator" label="Area Estimation" hidden="true">
+				<job_ref name="estimate_area" label="Estimate Area" />
+			</flow>
+			<flow name="par_synthesis" label="Place and Route Logical Synthesis" treeVisibility="hide_parent" />
+			<flow name="par_physical" label="Place and Route Physical Synthesis" treeVisibility="hide_parent" />
+			<flow name="synthesis" label="Logic Synthesis" >
+				<flow_ref name="compile" />
+				<flow_ref name="map" />
+				<flow_ref name="par_synthesis" />
+			</flow>
+			<flow name="synthesis_inc" label="Logic Synthesis" >
+				<flow_ref name="compile_flow_inc" />
+				<flow_ref name="map" />
+				<flow_ref name="par_synthesis" />
+			</flow>
+			<flow name="proto_synthesis" label="Protoware Logic Synthesis" >
+				<flow_ref name="compile_flow" />
+				<flow_ref name="pre_map" />
+				<flow_ref name="map" />
+			</flow>
+			<flow name="proto_synthesis_inc" label="Protoware Logic Synthesis" >
+				<flow_ref name="compile_flow_inc" />
+				<flow_ref name="pre_map" />
+				<flow_ref name="map" />
+			</flow>
+			<flow name="synthesis_place" label="Synthesis and Physical Plus" treeVisibility="hide_parent">
+				<flow_ref name="synthesis" />
+			</flow>
+			<flow name="postpar_resynthesis" label="Post Place and Route Resynthesis" hidden="true">
+				<job_ref name="vivado_write_xdc" label="Vivado Write XDC" />
+				<job_ref name="postpar_resynthesis_mapper" label="Post Place and Route Resynthesis mapper" />
+			</flow>
+			<flow name="quartus_postpar_resynthesis_flow" label="Quartus Post-PAR Resynthesis">
+				<job_ref name="quartus_write_placement" />
+				<job_ref name="quartus_postpar_resynthesis" />
+			</flow>
+			<flow name="par_backannotation" label="Place and Route Backannotation Flow" hidden="true">
+				<job_ref name="vivado_write_xdc" label="Vivado Write XDC" />
+				<job_ref name="vivado_backannotation" label="Place and Route Backannotation" />
+			</flow>
+			<flow name="system_designer_prep" label="System Designer Preparation" hidden="true">
+				<job_ref name="sd_board_compiler" label="System Designer Compile Board" />
+				<job_ref name="sd_netlist_optimizer" label="System Designer Optimize Design" />
+			</flow>
+
+			<job_ref name="estimate_area_job" label="Estimate Area Job for Partitioning"/>
+			<job_ref name="estimate_area_fast" label="Fast Estimate Area" hidden="true"/>
+			<job_ref name="estimate_timing_cpm" label="Estimate Timing for CPM Qualified Nets (can be used during manual CPM insertion)##(optional)"/>
+			<job_ref name="hstdm_generate" label="Do HSTDM Assignments##(HSTDM mode only)"/>
+			<job_ref name="reset_generate" label="Do HAPS Reset Configuration" hidden="true"/>
+			<flow_ref name="slp_generate" />
+			<job_ref name="timing_analysis" alias="timing" label="System Level Timing Analysis##(optional)"/>
+
+			<flow name="estimate_timing" label="Estimate Time-Budgets">
+				<job_ref name="estimate_timing_job" />
+			</flow>
+			<flow name="estimate_timing_cpm" label="Estimate Timing for CPM Qualified Nets (can be used during manual CPM insertion)##(optional)">
+				<job_ref name="estimate_cpm_premap" hidden="true" />
+				<job_ref name="estimate_timing_cpm_job" />
+			</flow>
+			<flow name="estimate_cpm_clock_frequency" label="Estimate CPM Clock##(optional)" >
+				<job_ref name="estimate_cpm_premap"  hidden="true" />
+				<job_ref name="estimate_cpm_clock_frequency_job" />
+			</flow>
+			<flow name="estimate_area" label="Estimate Area for Partitioning##(optional)" hidden="true">
+				<job_ref name="estimate_area_premap" />
+				<job_ref name="estimate_area_job" />
+			</flow>
+		</implementation>
+
+		<!-- ============================= -->
+		<!--  Synplify Pro Job Flows       -->
+		<!-- ============================= -->
+		<implementation category="synplify_pro" name="synplify_pro" default_flow="true" default_run_flow="synthesis">
+			<flow name="utility_flow" label="Utility Jobs" hidden="true">
+				<job_ref name="hdl_info_gen" label="HDL Data Generator"/>
+				<job_ref name="compile_dm" label="Compile DM (Database Model)"/>
+				<job_ref name="timing" label="Timing Analysis"/>
+				<job_ref name="constraint_check_job" label="Constraint Checker"/>
+				<job_ref name="report_clocks" label="Generate Clock Report"/>
+				<job_ref name="write_netlist" label="Generate Output Netlist"/>
+				<job_ref name="activity_analysis" label="Activity Analysis"/>
+				<job_ref name="syntax_check" label="Syntax Check" />
+				<job_ref name="synthesis_check" label="Synthesis Check" />
+				<job_ref name="archive" label="Archive Syntax Check" />
+				<job_ref name="power_analysis" label="Power Analysis" />
+				<job_ref name="generate_context" label="Generate Instance Budgets" />
+				<job_ref name="generate_timing_budgets" label="Generate Timing Budgets" />
+				<job_ref name="generate_instance_constraints" label="Generate Instance Constraints" />
+				<job_ref name="planner" label="Partitioner" />
+			</flow>
+
+			<flow name="quartus_backannotation" label="Quartus Backannotation">
+				<job_ref name="quartus_write_placement" />
+				<job_ref name="quartus_backannotation_job" />
+			</flow>
+
+			<flow name="compile_flow" label="Compile Process">
+				<job_ref name="identify_db_generator" label="Identify Database Generator" hidden_not_needed="true" />
+				<job_ref name="cdc_processor" label="Compiler Constraint Processor" hidden_not_needed="true" hidden="true" />
+				<job_ref name="unified_compile" label="Unified Compile" hidden_not_needed="true" hidden="true" />
+				<job_ref name="identify_compile" label="Identify Compile" hidden_not_needed="true" />
+				<job_ref name="compiler" label="Compile Input" />
+				<job_ref name="cdc_applicator" label="Compiler Constraint Applier" hidden_not_needed="true" hidden="true" />
+				<job_ref name="macid" label="Create MAC Hierarchy" />
+				<job_ref name="linker" label="HPM Linker" />
+				<job_ref name="netlist_optimizer" label="Optimize Design" />
+				<job_ref name="global_optimizer" label="Global Optimizer" hidden_not_needed="true" />
+				<job_ref name="multi_srs_gen" label="Multi-srs Generator" hidden_not_needed="true" hidden="true" />
+				<job_ref name="randomize_netlist_job" label="Randomize Netlist - Internal" hidden_not_needed="true" hidden="true" />
+<!-- Removed, insufficiently tests, use nfilter instead.
+				<job_ref name="od_netlist_editor" label="On Demand Netlist Editor"/>
+-->
+				<job_ref name="od_constraint_applier" label="On Demand Constraint Applier"/>
+				<job_ref name="od_upf_applier" label="On Demand UPF Applier"/>
+				<job_ref name="global_prep" label="Global Preparation"/>
+			</flow>
+
+			<flow name="compile_setup" label="Compile Setup" />
+			<flow name="compile" label="Compile" >
+				<flow_ref name="compile_flow" />
+				<job_ref name="partition_optimizer" label="WriteNetlist Generator"/>
+				<job_ref name="fsm_explorer_job" label="FSM Explorer"/>
+				<job_ref name="planner" label="Planner"/>
+				<job_ref name="xilinx_constraints_processor" label="Translate Constraints"/>
+				<job_ref name="io_placement_conversion" label="IO Placement Conversion"/>
+				<job_ref name="partition_premap" label="Certify Premap"/>
+				<job_ref name="premap" label="Premap"/>
+			</flow>
+
+			<flow name="rtl_check" label="RTL Check" mode="rtl_check">
+				<job_ref name="cdc_processor" label="Compiler Constraint Processor" hidden_not_needed="true" hidden="true" />
+				<job_ref name="compiler" label="Compile Input" />
+				<job_ref name="cdc_applicator" label="Compiler Constraint Applier" hidden_not_needed="true" hidden="true" />
+				<job_ref name="linker" label="Hierarchical Project Link" />
+				<job_ref name="premap" label="Premap"/>
+			</flow>
+
+			<flow name="generate_vqm" label="Generate VQM" >
+				<job_ref name="compiler" label="Compile Input" />
+				<job_ref name="write_vqm_netlist" label="VQM netlist generator"/>
+			</flow>
+
+			<flow name="map" label="Map" alias="synthesis_only" >
+				<job_ref name="fpga_mapper" label="Map &amp; Optimize"/>
+			</flow>
+			
+			<flow name="par_synthesis" label="Place and Route Post-Synthesis" treeVisibility="hide_parent"> </flow>
+
+			<flow name="synthesis" label="Logic Synthesis" >
+				<flow_ref name="compile" />
+				<flow_ref name="map" />
+				<flow_ref name="par_synthesis" />
+			</flow>
+			<!-- Running compile in constraint_check mode does the contraint check -->
+			<flow name="constraint_check" label="Constraint Check" mode="constraint_check">
+				<flow_ref name="compile" />
+			</flow>
+			<flow name="estimate_time_budgets" label="Estimate Time Budgets" mode="estimate_time_budgets">
+				<flow_ref name="compile" />
+				<flow_ref name="map" />
+			</flow>
+			<flow name="fsm_explorer" label="FSM Explorer" mode="fsm_explorer">
+				<flow_ref name="compile" />
+				<flow_ref name="map" />
+			</flow>
+			<flow name="partitioner" label="Partitioner">
+				<flow_ref name="compile" />
+				<job_ref name="planner" />
+			</flow>
+			<flow name="compile_vm" label="Compile VM" mode="compile_vm">
+				<job_ref name="cdc_processor" label="Compiler Constraint Processor" hidden_not_needed="true" hidden="true" />
+				<job_ref name="compiler" label="Compile Input" />
+				<job_ref name="cdc_applicator" label="Compiler Constraint Applier" hidden_not_needed="true" hidden="true" />
+				<job_ref name="linker" label="HPM Link" />
+				<job_ref name="premap" label="Pre-mapping"/>
+			</flow>
+			<flow name="estimator" label="Area Estimation" hidden="true">
+				<job_ref name="identify_compile" label="Identify Compile" hidden_not_needed="true" />
+				<job_ref name="compiler" label="Compile Input" />
+				<job_ref name="macid" label="Create MAC Hierarchy" />
+				<job_ref name="estimate_area" label="Estimate Area" />
+			</flow>
+			<flow name="system_designer_prep" label="System Designer Preparation" hidden="true">
+				<job_ref name="sd_board_compiler" label="System Designer Compile Board" />
+				<job_ref name="sd_netlist_optimizer" label="System Designer Optimize Design" />
+			</flow>
+		</implementation>
+
+		<!-- ============================= -->
+		<!--  Synplify Premier Job Flows   -->
+		<!-- ============================= -->
+		<implementation category="synplify_premier" name="synplify_premier" default_flow="true" default_run_flow="synthesis">
+			<flow name="utility_flow" label="Utility Jobs" hidden="true">
+				<job_ref name="hdl_info_gen" label="HDL Data Generator"/>
+				<job_ref name="compile_dm" label="Compile DM (Database Model)"/>
+				<job_ref name="timing" label="Timing Analysis"/>
+				<job_ref name="constraint_check_job" label="Constraint Checker"/>
+				<job_ref name="report_clocks" label="Generate Clock Report"/>
+				<job_ref name="write_netlist" label="Generate Output Netlist"/>
+				<job_ref name="activity_analysis" label="Activity Analysis"/>
+				<job_ref name="syntax_check" label="Syntax Check" />
+				<job_ref name="synthesis_check" label="Synthesis Check" />
+				<job_ref name="rtl_linker" label="RTL Linker" />
+				<job_ref name="archive" label="Archive Syntax Check" />
+				<job_ref name="power_analysis" label="Power Analysis" />
+				<job_ref name="generate_context" label="Generate Instance Budgets" />
+				<job_ref name="generate_timing_budgets" label="Generate Timing Budgets" />
+				<job_ref name="generate_instance_constraints" label="Generate Instance Constraints" />
+				<job_ref name="planner" label="Partitioner" />
+				<job_ref name="congestion_analysis_mapper" label="Congestion Report" />
+				<job_ref name="postpar_resynthesis_mapper" label="Post Place &amp; Route Resynthesis" />
+			</flow>
+
+			<flow name="generate_vqm" label="Generate VQM" >
+				<job_ref name="compiler" label="Compile Input" />
+				<job_ref name="write_vqm_netlist" label="VQM netlist generator"/>
+			</flow>
+
+			<flow name="quartus_backannotation_flow" label="Quartus Backannotation">
+				<job_ref name="quartus_write_placement" />
+				<job_ref name="quartus_backannotation_job" />
+			</flow>
+
+			<flow name="quartus_postpar_resynthesis_flow" label="Quartus Post-PAR Resynthesis">
+				<job_ref name="quartus_write_placement" />
+				<job_ref name="quartus_postpar_resynthesis" />
+			</flow>
+
+			<flow name="compile_rtl_hier" label="Compile RTL Hierarchy" >
+				<job_ref name="cdc_processor" label="Compiler Constraint Processor" hidden_not_needed="true" hidden="true" />
+				<job_ref name="compiler" label="Compile Input" />
+				<job_ref name="cdc_applicator" label="Compiler Constraint Applier" hidden_not_needed="true" hidden="true" />
+				<job_ref name="netlist_optimizer" label="Optimize Design" />
+				<job_ref name="rtl_linker" label="RTL Linker" hidden_not_needed="true" />
+			</flow>
+
+			<flow name="compile_hier" label="Hierarchical Compile" />
+
+			<flow name="rtl_check" label="RTL Check" mode="rtl_check">
+				<job_ref name="cdc_processor" label="Compiler Constraint Processor" hidden_not_needed="true" />
+				<job_ref name="compiler" label="Compile Input" />
+				<job_ref name="cdc_applicator" label="Compiler Constraint Applier" hidden_not_needed="true" />
+				<job_ref name="linker" label="Hierarchical Project Link" />
+				<job_ref name="premap" label="Premap"/>
+			</flow>
+
+			<flow name="map" label="Map" alias="synthesis_only" >
+				<job_ref name="fpga_mapper" label="Map &amp; Optimize"/>
+			</flow>
+			<flow name="synthesis" label="Logic Synthesis" >
+				<flow_ref name="compile" />
+				<flow_ref name="map" />
+				<flow_ref name="par_synthesis" />
+			</flow>
+			<!-- Running compile in constraint_check mode does the contraint check -->
+			<flow name="constraint_check" label="Constraint Check" mode="constraint_check">
+				<flow_ref name="compile" />
+			</flow>
+			<flow name="estimate_time_budgets" label="Estimate Time Budgets" mode="estimate_time_budgets">
+				<flow_ref name="compile" />
+				<flow_ref name="map" />
+			</flow>
+			<flow name="fsm_explorer" label="FSM Explorer" mode="fsm_explorer">
+				<flow_ref name="compile" />
+				<flow_ref name="map" />
+			</flow>
+			<flow name="partitioner" label="Partitioner">
+				<flow_ref name="compile" />
+				<job_ref name="planner" />
+			</flow>
+			<flow name="compile_vm" label="Compile VM" mode="compile_vm">
+				<job_ref name="cdc_processor" label="Compiler Constraint Processor" hidden_not_needed="true" hidden="true" />
+				<job_ref name="compiler" label="Compile Input" />
+				<job_ref name="cdc_applicator" label="Compiler Constraint Applier" hidden_not_needed="true" hidden="true" />
+				<job_ref name="linker" label="HPM Link" />
+				<job_ref name="premap" label="Premap"/>
+			</flow>
+			<flow name="estimator" label="Area Estimation" hidden="true">
+				<job_ref name="identify_compile" label="Identify Compile" hidden_not_needed="true" />
+				<job_ref name="compiler" label="Compile Input" />
+				<job_ref name="macid" label="Create MAC Hierarchy" />
+				<job_ref name="estimate_area" label="Estimate Area" />
+			</flow>
+			<flow name="par_synthesis" label="Place and Route Logical Synthesis" treeVisibility="hide_parent">
+			</flow>
+			<flow name="par_physical" label="Place and Route Physical Synthesis" treeVisibility="hide_parent">
+			</flow>
+			<flow name="synthesis_place" label="Synthesis and Physical Plus" treeVisibility="hide_parent">
+				<flow_ref name="synthesis" />
+			</flow>
+
+			<flow name="system_designer_prep" label="System Designer Preparation" hidden="true">
+				<job_ref name="sd_board_compiler" label="System Designer Compile Board" />
+				<job_ref name="sd_netlist_optimizer" label="System Designer Optimize Design" />
+			</flow>
+		</implementation>
+	</implementations>
+
+	<flows>
+		<flow name="slp_generate" label="SLP Generation">
+			<job_ref name="slp_project_gen" label="Generate SLP Projects"/>
+			<job_ref name="trimdep" label="Trim Dependent Table" hidden_not_needed="true" hidden="true" />
+			<job_ref name="slp_mapper" label="Generate SLP data files"/>
+		</flow>
+	</flows>
+</dynamic_flows>

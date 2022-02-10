@@ -1,0 +1,26 @@
+
+Starting:    /home/plato/dev/github/xc-firmware/tools/synpbase/linux_a_64/mbin/synbatch
+Install:     /home/plato/dev/github/xc-firmware/tools/synpbase
+Hostname:    Plato
+Date:        Fri Jul 30 23:47:54 2021
+Version:     N-2018.03L-SP1-1
+
+Arguments:   -product synplify_pro -batch ../../../build/xc8/xc-firmware_xc8_synplify.tcl
+ProductType: synplify_pro
+
+License checkout unsuccessful: synplifypro
+Checkout failed - synplifypro No such feature exists.
+Feature:       synplifypro
+License path:  /opt/lattice/diamond/license/lenovo.dat:
+FlexNet Licensing error:-5,234
+For further information, refer to the FlexNet Licensing documentation,
+available at "www.flexerasoftware.com".
+
+
+
+
+Host ID:  "d053494d8a59 68f7286e2745"
+Please contact support at https://solvnet.synopsys.com/ManageCase?ccf=1
+
+
+
