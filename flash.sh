@@ -150,6 +150,10 @@ build() {
 	generate;
 }
 
+ide() {
+      ${TOOLSDIR}/launch_ide
+}
+
 mkdir -p "$HOME/.config/LatticeSemi/"
 
 environment $@
